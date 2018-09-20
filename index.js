@@ -26,7 +26,8 @@ function inherit(obj,clone = false,...parents)
     {
         for(let parent of parents)
         {
-            if(parent instanceof Function || parent instanceof Array && parent[0] instanceof Function)
+            if(parent instanceof Array) parent = parent[0];
+            if(parent instanceof Function)
             {
                 const temp = new parent();
                 for(let prop in temp)
@@ -87,6 +88,11 @@ class C1
         this.a = 100;
         this.b = 200;
     }
+
+    sing()
+    {
+        console.log("Stuck in the middle with you!");
+    }
 }
 
 
@@ -97,9 +103,14 @@ class M1
         this.x = 1000;
         this.y = 2000;
     }
+
+    sing()
+    {
+        console.log("I am Free Free Fallin' Fallin'");
+    }
 }
 
-class C2 extends m(C1,M1)
+class C2 extends m([C1,2],M1)
 {
     constructor()
     {
@@ -117,7 +128,8 @@ console.log(obj1.a);
 console.log(obj1.b);
 console.log(obj1.x);
 console.log(obj1.y);
-console.log(obj1.__parents__);
+obj1.sing();
+// console.log(obj1.__parents__);
 
 // obj3.parents(obj1,[obj2,2]);
 // obj3.inherit(obj1,[obj2,2]);
