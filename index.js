@@ -1,5 +1,3 @@
-const util = require("util");
-
 const handler = {
     get:(target,key,receiver) => {
             if(key in target) return target[key];
@@ -33,7 +31,6 @@ function inherit(obj,clone = false,...parents)
                 const temp = new parent();
                 for(let prop in temp)
                 {
-                    console.log(temp[prop]);
                     obj[prop] = temp[prop];
                 }
             }
@@ -57,39 +54,77 @@ function inherit(obj,clone = false,...parents)
 }
 
 Object.prototype.extends = function(...p) { inherit(this,true,...p); };
-Object.prototype.bases = function(...p) { inherit(this,false,...p); };
+Object.prototype.inherit = function(...p) { inherit(this,false,...p); };
 Object.prototype.instanceof = function(...p){  };
 
-const obj1 = {
-    x:10,
-    y:20
+function m(...c)
+{
+    return function()
+    {
+        this.extends(...c);
+    }
 }
 
-const obj2 = {
-    y:30
-}
+// const obj1 = {
+//     x:10,
+//     y:20
+// }
 
-const obj3 = {
-    z:40,
-    k:100,
-    v:200
-}
+// const obj2 = {
+//     y:30
+// }
+
+// const obj3 = {
+//     z:40,
+//     k:100,
+//     v:200
+// }
 
 class C1
 {
     constructor()
     {
-        this.a = 1000;
-        this.b = 2000;
+        this.a = 100;
+        this.b = 200;
     }
 }
 
-// obj3.parents(obj1,[obj2,2]);
-obj3.extends(obj1,[obj2,2],C1);
 
-console.log(obj3.x);
-console.log(obj3.y);
-console.log(obj3.z);
-console.log(obj3.a);
-console.log(obj3.b);
-console.log(obj3.__parents__);
+class M1
+{
+    constructor()
+    {
+        this.x = 1000;
+        this.y = 2000;
+    }
+}
+
+class C2 extends m(C1,M1)
+{
+    constructor()
+    {
+        super();
+        this.i = 10;
+        this.j = 20;
+    }
+}
+
+let obj1 = new C2();
+
+console.log(obj1.i);
+console.log(obj1.j);
+console.log(obj1.a);
+console.log(obj1.b);
+console.log(obj1.x);
+console.log(obj1.y);
+console.log(obj1.__parents__);
+
+// obj3.parents(obj1,[obj2,2]);
+// obj3.inherit(obj1,[obj2,2]);
+
+// console.log(obj3.x);
+// console.log(obj3.y);
+// console.log(obj3.z);
+// console.log(obj3.a);
+// console.log(obj3.b);
+// console.log(obj3.__parents__);
