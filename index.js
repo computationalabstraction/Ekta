@@ -1,4 +1,4 @@
-// const util = require("util");
+const util = require("util");
 const handler = {
     get:(target,key) => {
         if (key != util.inspect.custom && 
