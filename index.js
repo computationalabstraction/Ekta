@@ -1,5 +1,9 @@
+// const util = require("util");
 const handler = {
-    get:(target,key,receiver) => {
+    get:(target,key) => {
+        if (key != util.inspect.custom && 
+            key != 'inspect' && 
+            key != Symbol.toStringTag) {
             if(key in target) return target[key];
             else
             {
@@ -16,10 +20,28 @@ const handler = {
                 if(highest[0] != null) return highest[0][key];
                 else throw new Error("Missing: No Such Slot");
             }
+        }
+    },
+
+    has:(target,key) => {
+        if(key in target) return true;
+        else
+        {
+            let parents = target.__parents__.filter(link => key in link[0]);
+            if(parents.length > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 }
 
-function inherit(obj,clone = false,...parents)
+function Reuse(obj,clone = false,...parents)
 {
     const metadata = {};
     if(clone)
@@ -30,7 +52,7 @@ function inherit(obj,clone = false,...parents)
             if(parent instanceof Function)
             {
                 const temp = new parent();
-                for(let prop in temp)
+                for(let prop of Object.keys(temp))
                 {
                     obj[prop] = temp[prop];
                 }
@@ -39,10 +61,10 @@ function inherit(obj,clone = false,...parents)
     }
     for(let i in parents)
     {
-        parent = parents[i];
+        let parent = parents[i];
         if(parent instanceof Array) 
         {
-            if(parent[0] instanceof Function) parents[i] = [parent.prototype,parent[1]];
+            if(parent[0] instanceof Function) parents[i] = [parent[0].prototype,parent[1]];
             else continue;
         }
         else if(parent instanceof Function) parents[i] = [parent.prototype,1];
@@ -54,8 +76,8 @@ function inherit(obj,clone = false,...parents)
     return this; 
 }
 
-Object.prototype.extends = function(...p) { inherit(this,true,...p); };
-Object.prototype.inherit = function(...p) { inherit(this,false,...p); };
+Object.prototype.extends = function(...p) { Reuse(this,true,...p); };
+Object.prototype.inherit = function(...p) { Reuse(this,false,...p); };
 Object.prototype.instanceof = function(...p){  };
 
 function m(...c)
@@ -66,20 +88,23 @@ function m(...c)
     }
 }
 
-// const obj1 = {
-//     x:10,
-//     y:20
-// }
+const obj = {
+    x:10,
+    y:20,
+    l:80
+}
 
-// const obj2 = {
-//     y:30
-// }
+const obj2 = {
+    y:30
+}
 
-// const obj3 = {
-//     z:40,
-//     k:100,
-//     v:200
-// }
+const obj3 = {
+    z:40,
+    k:50,
+    v:60
+}
+
+obj3.inherit(obj,[obj2,2]);
 
 class C1
 {
@@ -95,7 +120,6 @@ class C1
     }
 }
 
-
 class M1
 {
     constructor()
@@ -106,11 +130,18 @@ class M1
 
     sing()
     {
-        console.log("I am Free Free Fallin' Fallin'");
+        console.log("and I am Free Free Fallin' Fallin'....");
+    }
+
+    dance()
+    {
+        console.log("I'm Bad I'm Bad!");
     }
 }
 
-class C2 extends m([C1,2],M1)
+M1.prototype.l = 90;
+
+class C2 extends m([C1,3],[M1,2],[obj3,4])
 {
     constructor()
     {
@@ -128,7 +159,13 @@ console.log(obj1.a);
 console.log(obj1.b);
 console.log(obj1.x);
 console.log(obj1.y);
+console.log(obj1.z);
+console.log(obj1.k);
+console.log(obj1.v);
+console.log(obj1.l);
 obj1.sing();
+obj1.dance();
+// console.log(obj1);
 // console.log(obj1.__parents__);
 
 // obj3.parents(obj1,[obj2,2]);
