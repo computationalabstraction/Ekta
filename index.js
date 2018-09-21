@@ -131,7 +131,7 @@ class M1
 
     sing()
     {
-        console.log("and I am Free Free Fallin' Fallin'....");
+        console.log("Sundown you better be safe......");
     }
 
     dance()
