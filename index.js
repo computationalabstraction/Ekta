@@ -184,19 +184,7 @@ console.log(obj1.l);
 obj1.sing();
 obj1.dance();
 
-console.log(obj1.instanceof(C1))
-console.log(obj1.instanceof(M1))
-console.log(obj1.instanceof(obj3))
+console.log(obj1.instanceof(C1));
+console.log(obj1.instanceof(M1));
+console.log(obj1.instanceof(obj3));
 console.log(obj1.instanceof(obj2));
-// console.log(obj1);
-// console.log(obj1.__parents__);
-
-// obj3.parents(obj1,[obj2,2]);
-// obj3.inherit(obj1,[obj2,2]);
-
-// console.log(obj3.x);
-// console.log(obj3.y);
-// console.log(obj3.z);
-// console.log(obj3.a);
-// console.log(obj3.b);
-// console.log(obj3.__parents__);
