@@ -78,7 +78,14 @@ function Reuse(obj,clone = false,...parents)
 
 Object.prototype.extends = function(...p) { Reuse(this,true,...p); };
 Object.prototype.inherit = function(...p) { Reuse(this,false,...p); };
-Object.prototype.instanceof = function(...p){  };
+Object.prototype.instanceof = function(p) { 
+    if(p instanceof Function) p = p.prototype;
+    for(let i of this.__parents__)
+    {
+        if(p === i[0]) return true;
+    }
+    return false;
+};
 
 function m(...c)
 {
@@ -166,6 +173,10 @@ console.log(obj1.v);
 console.log(obj1.l);
 obj1.sing();
 obj1.dance();
+
+console.log(obj1.instanceof(C1))
+console.log(obj1.instanceof(M1))
+console.log(obj1.instanceof(obj3))
 // console.log(obj1);
 // console.log(obj1.__parents__);
 
