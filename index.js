@@ -79,10 +79,12 @@ function Reuse(obj,clone = false,...parents)
 Object.prototype.extends = function(...p) { Reuse(this,true,...p); };
 Object.prototype.inherit = function(...p) { Reuse(this,false,...p); };
 Object.prototype.instanceof = function(p) { 
-    if(p instanceof Function) p = p.prototype;
-    for(let i of this.__parents__)
-    {
-        if(p === i[0]) return true;
+    if(p instanceof Function) {
+        p = p.prototype;
+        for(let i of this.__parents__)
+        {
+            if(p === i[0]) return true;
+        }
     }
     return false;
 };
