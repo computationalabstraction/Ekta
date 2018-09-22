@@ -1,2 +1,2 @@
 # Ravana
-### Self like Multiple Inheritance in Javascript
+### Self like Prioritized Multiple Inheritance in Javascript
