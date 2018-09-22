@@ -1,9 +1,9 @@
-const util = require("util");
+// const util = require("util");
 const handler = {
     get:(target,key) => {
-        if (key != util.inspect.custom && 
-            key != 'inspect' && 
-            key != Symbol.toStringTag) {
+        // if (key != util.inspect.custom && 
+        //     key != 'inspect' && 
+        //     key != Symbol.toStringTag) {
             if(key in target) return target[key];
             else
             {
@@ -20,7 +20,7 @@ const handler = {
                 if(highest[0] != null) return highest[0][key];
                 else throw new Error("Missing: No Such Slot");
             }
-        }
+        // }
     },
 
     has:(target,key) => {
@@ -28,14 +28,8 @@ const handler = {
         else
         {
             let parents = target.__parents__.filter(link => key in link[0]);
-            if(parents.length > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            if(parents.length > 0) return true;
+            else return false;
         }
         return false;
     }
@@ -70,24 +64,38 @@ function Reuse(obj,clone = false,...parents)
         else if(parent instanceof Function) parents[i] = [parent.prototype,1];
         else parents[i] = [parent,1];
     }
-    metadata.target = this;
+    metadata.target = obj;
     metadata.__parents__ = parents;
     obj.__proto__ = new Proxy(metadata,handler);
     return this; 
 }
 
-Object.prototype.extends = function(...p) { Reuse(this,true,...p); };
-Object.prototype.inherit = function(...p) { Reuse(this,false,...p); };
-Object.prototype.instanceof = function(p) { 
-    if(p instanceof Function) {
-        p = p.prototype;
-        for(let i of this.__parents__)
-        {
-            if(p === i[0]) return true;
+function lookup(obj,p)
+{
+    if(obj.__proto__ == p) return true;
+    if(obj.__proto__ != undefined) return lookup(obj.__proto__,p);
+    else return false;
+}
+
+function iof(obj,p)
+{ 
+    console.log("Called");
+    if(p instanceof Function) p = p.prototype;
+    if (Reflect.has(obj,"__parents__")) 
+    {
+        console.log(obj)
+        for(let i of obj.__parents__) {
+            console.log(i);
+            return iof(i[0],p);
         }
     }
+    else return lookup(obj,p);
     return false;
-};
+}
+
+Object.prototype.extends = function(...p) { Reuse(this,true,...p); };
+Object.prototype.inherit = function(...p) { Reuse(this,false,...p); };
+Object.prototype.instanceof = function(p) { iof(this,p); };
 
 function m(...c)
 {
@@ -179,6 +187,7 @@ obj1.dance();
 console.log(obj1.instanceof(C1))
 console.log(obj1.instanceof(M1))
 console.log(obj1.instanceof(obj3))
+console.log(obj1.instanceof(obj2));
 // console.log(obj1);
 // console.log(obj1.__parents__);
 
